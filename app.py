@@ -12,7 +12,7 @@ st.title('🌾 AI-Based Crop Production Trend Prediction')
 
 @st.cache_data
 def load_data(file_path):
-    df = pd.read_csv(file_path)
+    df = pd.read_csv("/content/crop-data.csv")
     # Clean column names to remove BOM characters and quotes
     df.columns = df.columns.str.replace('ï»¿', '', regex=False).str.replace('"', '', regex=False).str.strip()
     return df
