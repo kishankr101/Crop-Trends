@@ -1,55 +1,58 @@
 import streamlit as st
-import matplotlib.pyplot as plt
+import pandas as pd
+from model_utils import *
 
-from data_utils import load_and_prepare_data, filter_data
-from model_utils import train_model, forecast_future
-
-# --------------------------------------------------
-st.set_page_config(page_title="Crop Production Predictor", layout="centered")
-
-st.title("🌾 AI-Based Crop Production Trend Predictor")
-st.markdown(
-    "Predict future crop production trends to anticipate surplus or shortages."
+st.set_page_config(
+    page_title="Crop Trend Predictor",
+    layout="wide"
 )
 
-# --------------------------------------------------
-@st.cache_data
-def load_data():
-    return load_and_prepare_data()
+st.title("🌾 AI‑Based Crop Production Trend Predictor")
+st.caption(
+    "Predictive decision‑support to anticipate crop surplus and shortages"
+)
 
-df = load_data()
+# Load data
+df_raw = load_data("data/crop_data.csv")
+df = preprocess_data(df_raw)
 
-# --------------------------------------------------
-states = sorted(df["State"].unique())
-seasons = sorted(df["Season"].unique())
+# Sidebar
+st.sidebar.header("Select Inputs")
+state = st.sidebar.selectbox("State", sorted(df["State"].unique()))
+crop = st.sidebar.selectbox("Crop", sorted(df["Crop"].unique()))
 
-state = st.selectbox("Select State", states)
-season = st.selectbox("Select Season", seasons)
+if st.sidebar.button("Predict Trend"):
+    model, filtered = train_model(df, state, crop)
 
-# --------------------------------------------------
-if st.button("Generate Prediction"):
-    df_filt = filter_data(df, state, season)
+    last_year = filtered["Year"].max()
+    years, predictions = predict_future(model, last_year)
 
-    if len(df_filt) < 3:
-        st.warning("Not enough data for prediction.")
-    else:
-        model, last_val = train_model(df_filt)
-        years, preds, status, recommendation = forecast_future(model, last_val)
+    trend, risk, recommendation = generate_insight(predictions)
 
-        # ------------------ Plot ------------------
-        fig, ax = plt.subplots()
-        ax.plot(df_filt["Year"], df_filt["Production"], marker="o", label="Historical")
-        ax.plot(years, preds, linestyle="--", marker="o", label="Forecast")
+    # --- OUTPUTS ---
+    st.subheader(f"📍 {crop} in {state}")
 
-        ax.set_title(f"Production Trend: {state} ({season})")
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Production")
-        ax.legend()
-        ax.grid(True)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Trend", trend)
+    col2.metric("Risk Indicator", risk)
+    col3.metric(
+        "Predicted Production (Next Year)",
+        f"{predictions[-1]:.2f}"
+    )
 
-        st.pyplot(fig)
+    st.markdown("### 📈 Production Trend")
+    chart_df = pd.DataFrame({
+        "Year": list(filtered["Year"]) + list(years),
+        "Production": list(filtered["Production"]) + list(predictions)
+    })
 
-        # ------------------ Output ------------------
-        st.subheader("📌 Prediction Result")
-        st.success(status)
-        st.markdown(recommendation)
+    st.line_chart(chart_df.set_index("Year"))
+
+    st.markdown("### 🧠 Recommendation")
+    st.success(recommendation)
+
+st.markdown("---")
+st.caption(
+    "⚠️ Disclaimer: Predictions are trend‑based and indicative. "
+    "Use alongside local agronomic expertise."
+)
