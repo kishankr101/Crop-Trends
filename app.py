@@ -1,3 +1,8 @@
+st.sidebar.info(
+    "This tool provides AI‑based trend insights to help "
+    "anticipate crop surplus and shortages."
+)
+
 import streamlit as st
 import pandas as pd
 from model_utils import *
