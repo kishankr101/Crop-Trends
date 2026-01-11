@@ -8,7 +8,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, r2_score
 
 st.set_page_config(layout="wide")
-st.title('🌾 AI-Based Crop Production Trend Prediction')
+st.title("🌾 AI-Based Crop Production Trend Prediction")
 
 @st.cache_data
 from data_utils import load_data
