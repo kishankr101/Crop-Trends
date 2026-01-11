@@ -96,5 +96,6 @@ The application is deployed using **Streamlit Cloud**.
 ---
 
 ## 👥 Team
-- Lokesh Arikatla
 - Kishan Kumar
+- V. Mohan
+- J. Leo
