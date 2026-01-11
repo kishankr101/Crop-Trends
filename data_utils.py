@@ -1,6 +1,10 @@
 import pandas as pd
 import numpy as np
-file_path = "/data/crop-data.csv"
+import os
+
+DATA_PATH = os.path.join("data", "crop_data.csv")
+df = pd.read_csv(DATA_PATH)
+
 def load_and_prepare_data():
     """
     Loads raw data and converts wide format to long format.
