@@ -17,7 +17,7 @@ st.title("🌾 AI-Based Crop Production Trend Prediction")
 # ---------------- LOAD DATA ----------------
 @st.cache_data
 def get_data():
-    df = load_data("crop_data.csv")
+    df = load_and_prepare_data("crop_data.csv")
     df.columns = (
         df.columns
         .str.replace('ï»¿', '', regex=False)
