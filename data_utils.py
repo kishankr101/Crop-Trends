@@ -2,7 +2,7 @@ import pandas as pd
 
 def load_and_prepare_data(csv_file):
 
-    df = pd.read_csv(csv_file)
+    df = pd.read_csv(crop-data.csv)
 
     df.columns = (
         df.columns
