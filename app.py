@@ -7,7 +7,7 @@ import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, r2_score
 
-from data_utils import load_data
+from data_utils import load_and_prepare_data
 from model_utils import train_model, predict_trend
 
 # ---------------- PAGE CONFIG ----------------
